@@ -37,11 +37,12 @@ const F = UI_FMT;
 
 const ICON = {
   home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
-  subs: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M7 14h5"/>',
+  subs: '<path d="M12 3 3 7.5l9 4.5 9-4.5z"/><path d="M3 12l9 4.5 9-4.5"/><path d="M3 16.5 12 21l9-4.5"/>',
   miles: '<path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/>',
   plane: '<path d="M21 15.5v-1.8l-7.5-4.6V4a1.5 1.5 0 0 0-3 0v5.1L3 13.7v1.8l7.5-2.2v4.6L8.6 19.3V21l3.4-1 3.4 1v-1.7l-1.9-1.4v-4.6z"/>',
   bag: '<path d="M5 8h14l-1 12H6z"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/>',
-  gear: '<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  addhome: '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8.5v7M8.5 12h7"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   open: '<path d="M14 4h6v6M20 4l-8.5 8.5M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
   cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
@@ -80,7 +81,7 @@ function defaultState() {
 
 function exampleState() {
   const s = defaultState();
-  s.onboarded = true; s.example = true; s.name = 'Arthur';
+  s.onboarded = true; s.example = true; s.name = '';
   const nu = { id: uid(), bankId: 'nubank', name: 'Nubank Ultravioleta', earn: 'cashback', cashbackPct: 1, fee: 0, monthlySpend: 3500, lounge: true, insurance: true };
   const it = { id: uid(), bankId: 'itau', name: 'Itaú Platinum', earn: 'points', ptsPerUSD: 1.5, program: 'itau', fee: 500, monthlySpend: 1200 };
   const mp = { id: uid(), bankId: 'mercadopago', name: 'Cartão Mercado Pago', earn: 'cashback', cashbackPct: 0, fee: 0, monthlySpend: 400, merchantBoost: { mercadolivre: 5 } };
@@ -130,13 +131,19 @@ let state = (() => {
 state.settings = { ...defaultState().settings, ...(state.settings || {}) };
 
 function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+const pref = {
+  get: (k) => { try { return localStorage.getItem('milheiro.pref.' + k); } catch (e) { return null; } },
+  set: (k, v) => { try { localStorage.setItem('milheiro.pref.' + k, v); } catch (e) {} },
+};
 function commit(fn) { fn(state); save(); render(); }
 
 /* ---------- toast e sheet ---------- */
 const UI = {
-  toast(msg, ms = 3200) {
+  toast(msg, ms = 3200, action) {
     const t = $('#toast');
-    t.textContent = msg; t.classList.add('show');
+    t.innerHTML = `<span>${h(msg)}</span>${action ? `<a class="toast-act" href="${h(action.href)}" target="_blank" rel="noopener">${h(action.label)}</a>` : ''}`;
+    t.classList.toggle('has-act', !!action);
+    t.classList.add('show');
     clearTimeout(UI._t); UI._t = setTimeout(() => t.classList.remove('show'), ms);
   },
 };
@@ -194,8 +201,11 @@ function route() {
   const hash = (location.hash || '').replace('#', '');
   if (hash === 'resgate') { current = 'milhas'; render(); setTimeout(() => $('#tool-redeem')?.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth' }), 60); return; }
   if (hash === 'nova') { current = 'assinaturas'; render(); openAddSub(); return; }
-  current = VIEWS.some((v) => v.id === hash) ? hash : 'inicio';
+  const next = VIEWS.some((v) => v.id === hash) ? hash : 'inicio';
+  const changed = next !== current;
+  current = next;
   render();
+  if (changed) window.scrollTo(0, 0);
 }
 function go(id) {
   if (location.hash !== '#' + id) location.hash = id; else route();
@@ -208,15 +218,14 @@ function render() {
   if (!state.onboarded) { app.innerHTML = renderOnboarding(); return; }
   const v = VIEWS.find((x) => x.id === current);
   app.innerHTML = `
-    <header class="top">
-      <div class="brand">${brandMark()}<span>Milheiro</span></div>
-      <div class="top-actions">
-        <button class="chip-btn install-btn" data-act="install">${icon('install')}<span>Instalar</span></button>
-        <button class="icon-btn" data-act="settings" aria-label="Ajustes">${icon('gear')}</button>
-      </div>
+    <header class="nav" id="nav">
+      <span class="nav-title" aria-hidden="true">${v.label}</span>
+      <button class="nav-btn" data-act="settings" aria-label="Ajustes">${icon('gear')}</button>
     </header>
-    ${state.example ? `<div class="example-bar"><span>Você está vendo <b>dados de exemplo</b>.</span><button data-act="start-real">Usar meus dados</button></div>` : ''}
-    <main id="view" class="view view-${current}">${VIEW_RENDER[current]()}</main>
+    <main id="view" class="view view-${current}">
+      ${state.example ? `<div class="example-bar"><span>Você está vendo <b>dados de exemplo</b>.</span><button data-act="start-real">Usar meus dados</button></div>` : ''}
+      ${VIEW_RENDER[current]()}
+    </main>
     <nav class="tabbar" aria-label="Seções">
       ${VIEWS.map((x) => `<a href="#${x.id}" class="tab ${x.id === current ? 'on' : ''}" ${x.id === current ? 'aria-current="page"' : ''}>${icon(x.icon)}<span>${x.label}</span></a>`).join('')}
     </nav>`;
@@ -227,6 +236,36 @@ function render() {
 function afterRender() {
   for (const k of Object.keys(scopes)) if (k !== 'sheet' && $(`[data-scope="${k}"]`)) scopes[k].onChange?.(scopes[k].draft);
   if (current === 'inicio') animateHome();
+  updateNav();
+  // Número de ações pendentes no ícone do app (iPhone com o app instalado e notificações ativas).
+  const pending = Engine.analyze(state).insights.filter((i) => !state.dismissed.includes(i.id) && (i.saving > 0 || i.risk)).length;
+  Phone.setBadge(pending);
+}
+
+function updateNav() {
+  const nav = $('#nav');
+  if (nav) nav.classList.toggle('scrolled', window.scrollY > 28);
+}
+
+function installBanner() {
+  if (Phone.standalone() || pref.get('installDismissed')) return '';
+  const close = `<button class="icon-btn tiny" data-act="install-dismiss" aria-label="Dispensar">${icon('x')}</button>`;
+  if (Phone.isIOS) {
+    return `<div class="install-banner">${appIconTile()}<div><b>Instale no iPhone</b><p>Toque em ${icon('share', 'inline')} e depois em <b>Adicionar à Tela de Início</b>. O Milheiro abre como app e funciona sem internet.</p></div>${close}</div>`;
+  }
+  if (Phone.canPrompt()) {
+    return `<div class="install-banner">${appIconTile()}<div><b>Instale o Milheiro</b><p>Abre como app, com ícone próprio, e funciona sem internet.</p></div><button class="btn btn-small" data-act="install">Instalar</button>${close}</div>`;
+  }
+  return '';
+}
+
+const appIconTile = () => `<span class="app-tile" aria-hidden="true">${brandMark()}</span>`;
+
+function backupCard() {
+  if (state.example || (!state.subs.length && !state.cards.length)) return '';
+  const last = Engine.parseDate(state.settings.lastBackup);
+  if (last && Engine.daysUntil(last) > -30) return '';
+  return `<div class="setup">${icon('down')}<div><b>Faça um backup</b><p>Seus dados ficam só neste aparelho. Guarde uma cópia no iCloud Drive ou no Arquivos.</p></div><button class="btn btn-small" data-act="backup">Salvar</button></div>`;
 }
 
 const brandMark = () => `<svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" style="fill:var(--ink)"/><path d="M7 21.5 16 8l9 13.5" fill="none" style="stroke:var(--gold)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="21.5" r="2.4" style="fill:var(--paper-on-ink)"/></svg>`;
@@ -247,8 +286,9 @@ function renderHome() {
   const setupTodo = !state.example && (state.wallet.some((x) => !Number(x.balance)) || state.cards.some((c) => !Number(c.monthlySpend)));
 
   return `
+  <h1 class="large-title">${greeting()}${state.name ? ', ' + h(state.name.split(' ')[0]) : ''}</h1>
+  ${installBanner()}
   <section class="hero">
-    <p class="eyebrow">${greeting()}${state.name ? ', ' + h(state.name) : ''}</p>
     <div class="hero-grid">
       <div class="ring ring-${tone}" role="img" aria-label="Índice de aproveitamento ${a.score} de 100">
         <svg viewBox="0 0 120 120"><circle class="ring-track" cx="60" cy="60" r="52"/><circle class="ring-val" cx="60" cy="60" r="52" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - a.score / 100)).toFixed(1)}" data-offset="${(C * (1 - a.score / 100)).toFixed(1)}" data-c="${C.toFixed(1)}"/></svg>
@@ -273,6 +313,7 @@ function renderHome() {
     <button role="listitem" data-act="ics-all">${icon('cal')}<span>Lembretes</span></button>
   </div>
 
+  ${backupCard()}
   ${setupTodo ? `<div class="setup">${icon('spark')}<div><b>Complete seus dados</b><p>Informe saldos de pontos e quanto gasta por mês em cada cartão. As sugestões ficam bem mais precisas.</p></div><button class="btn btn-small" data-act="goto" data-to="milhas">Completar</button></div>` : ''}
 
   <section class="block">
@@ -565,9 +606,9 @@ function openCardEditor(c, isNew) {
           ${field('Anuidade por ano (R$)', `<input id="c-fee" data-bind="fee" data-num inputmode="decimal" value="${h(d.fee ?? 0)}">`)}
           ${field('Gasto médio por mês', `<input id="c-spend" data-bind="monthlySpend" data-num inputmode="decimal" value="${h(d.monthlySpend || '')}" placeholder="R$">`)}
         </div>
-        <div class="checks">
-          <label><input type="checkbox" id="c-lounge" data-bind="lounge" ${d.lounge ? 'checked' : ''}> Dá acesso a salas VIP</label>
-          <label><input type="checkbox" id="c-ins" data-bind="insurance" ${d.insurance ? 'checked' : ''}> Tem seguro viagem</label>
+        <div class="switches">
+          <label class="switch-row"><span>Dá acesso a salas VIP</span><input type="checkbox" switch id="c-lounge" data-bind="lounge" ${d.lounge ? 'checked' : ''}></label>
+          <label class="switch-row"><span>Tem seguro viagem</span><input type="checkbox" switch id="c-ins" data-bind="insurance" ${d.insurance ? 'checked' : ''}></label>
         </div>
       </div>
       <div class="sheet-actions">
@@ -729,7 +770,7 @@ function renderBuy() {
   return `
   <section class="page-head">
     <h1>Qual cartão usar?</h1>
-    <p class="lede">Digite o valor da compra, ou compartilhe o link de um produto direto para o Milheiro.</p>
+    <p class="lede">Digite o valor da compra, ou copie o preço em qualquer app e toque em colar.</p>
   </section>
   <section class="block tool" data-scope="buy">
     <div class="amount-in">
@@ -767,15 +808,33 @@ function openSettings() {
         <p class="note">Esses valores definem quando um resgate é bom e quanto seus pontos valem. Os padrões são médias de mercado.</p>
       </div>
       <div class="settings-list">
-        <button data-act="notify-on">${icon('bell')}<span><b>Ativar notificações</b><small>Avisos de renovações e pontos vencendo ao abrir o app</small></span></button>
+        <button data-act="notify-on">${icon('bell')}<span><b>Ativar notificações</b><small>Avisos ao abrir o app e o número de pendências no ícone</small></span></button>
         <button data-act="ics-all">${icon('cal')}<span><b>Exportar para o calendário</b><small>Renovações, vencimentos e viagens com alarmes</small></span></button>
-        <button data-act="install">${icon('install')}<span><b>Instalar na tela inicial</b><small>Abre como app, funciona offline e recebe links compartilhados</small></span></button>
-        <button data-act="backup">${icon('down')}<span><b>Fazer backup</b><small>Salva seus dados em um arquivo .json</small></span></button>
+        ${Phone.standalone() ? '' : `<button data-act="install">${icon('addhome')}<span><b>Instalar na tela inicial</b><small>Abre como app, com ícone próprio, e funciona sem internet</small></span></button>`}
+        <button data-act="backup">${icon('down')}<span><b>Fazer backup</b><small>Salva seus dados num arquivo .json (iCloud Drive, Arquivos)</small></span></button>
         <label class="as-btn">${icon('share')}<span><b>Restaurar backup</b><small>Carrega um arquivo .json salvo antes</small></span><input type="file" id="restore" accept="application/json,.json" hidden></label>
         <button data-act="reset" class="danger">${icon('trash')}<span><b>Apagar tudo e recomeçar</b><small>Remove os dados deste aparelho</small></span></button>
       </div>
       <div class="sheet-actions"><button class="btn" data-act="settings-save">Salvar</button></div>
       <p class="muted small center">Seus dados ficam só neste aparelho. Nada é enviado para servidores.</p>`,
+  });
+}
+
+function openInstallSheet() {
+  Sheet.open({
+    title: 'Instalar no iPhone', draft: {},
+    body: () => `
+      <div class="install-steps">
+        <div class="install-hero">${appIconTile()}<div><b>Milheiro</b><span>Abre como app, com ícone próprio, e funciona sem internet. Não precisa de App Store.</span></div></div>
+        <ol class="steps">
+          <li><span class="step-n">1</span><span>Abra este endereço no <b>Safari</b>.</span></li>
+          <li><span class="step-n">2</span><span>Toque em ${icon('share', 'inline')} <b>Compartilhar</b>, na barra de baixo do Safari.</span></li>
+          <li><span class="step-n">3</span><span>Role a lista e toque em ${icon('addhome', 'inline')} <b>Adicionar à Tela de Início</b>.</span></li>
+          <li><span class="step-n">4</span><span>Toque em <b>Adicionar</b>. O ícone do Milheiro aparece na tela inicial.</span></li>
+        </ol>
+        <p class="note">Depois de instalar, ative as notificações em Ajustes para ver no ícone quantas ações estão pendentes.</p>
+      </div>
+      <div class="sheet-actions"><button class="btn" data-act="sheet-close">Entendi</button></div>`,
   });
 }
 
@@ -789,14 +848,17 @@ function renderOnboarding() {
     <div class="ob ob-welcome">
       <div class="ob-art" aria-hidden="true">${welcomeArt()}</div>
       <div class="ob-copy">
-        ${brandMark()}
         <h1>Cada real, cada ponto, aproveitado.</h1>
-        <p>O Milheiro junta seus bancos, cartões, benefícios da empresa e assinaturas em um só lugar. Ele encontra o que está sobrando, avisa antes dos pontos vencerem e diz qual cartão usar em cada compra.</p>
+        <ul class="features">
+          <li>${icon('subs')}<div><b>Assinaturas sem desperdício</b><span>Encontra o que você paga duas vezes, usa pouco ou já ganha da empresa.</span></div></li>
+          <li>${icon('miles')}<div><b>Milhas no lugar certo</b><span>Avisa antes dos pontos vencerem e diz se um resgate compensa.</span></div></li>
+          <li>${icon('card')}<div><b>O cartão certo em cada compra</b><span>Compara cashback, pontos, IOF e desconto no Pix.</span></div></li>
+        </ul>
         <div class="ob-actions">
           <button class="btn btn-wide" data-act="ob-next">Começar com meus dados</button>
           <button class="btn btn-ghost btn-wide" data-act="ob-example">Ver com dados de exemplo</button>
         </div>
-        <p class="muted small">Leva 1 minuto. Seus dados ficam só no seu celular.</p>
+        <p class="muted small center">Leva 1 minuto. Seus dados ficam só no seu celular.</p>
       </div>
     </div>`;
 
@@ -851,7 +913,7 @@ function finishOnboarding() {
     s.subs.push({ id: uid(), serviceId: id, name: svc.name, price: plan?.price ?? svc.price, plan: plan?.name, includes: plan ? [...plan.includes] : undefined, cycle: 'monthly', payer, usage: 'weekly', cardId: s.cards[0]?.id || '', renewDay: '', pointsPerMonth: svc.pointsPerMonth, program: svc.program });
   }
   state = s; save(); current = 'inicio'; animated = false;
-  location.hash = 'inicio'; render();
+  location.hash = 'inicio'; render(); window.scrollTo(0, 0);
   UI.toast('Pronto! Ajuste preços e saldos para afinar as sugestões.');
 }
 
@@ -877,7 +939,9 @@ function calendarEvents() {
 async function exportCalendar(events = calendarEvents(), name = 'milheiro-lembretes.ics') {
   if (!events.length) { UI.toast('Informe dias de renovação ou vencimentos para criar lembretes.'); return; }
   const ok = await Phone.addToCalendar(events, name);
-  if (ok) UI.toast(`${events.length} lembrete${events.length > 1 ? 's' : ''} prontos. Abra o arquivo para adicionar ao calendário.`, 4500);
+  if (!ok) return;
+  const n = `${events.length} lembrete${events.length > 1 ? 's' : ''}`;
+  UI.toast(Phone.isIOS ? `${n}: toque em Adicionar Tudo para salvar no Calendário.` : `${n} prontos. Abra o arquivo para adicionar ao calendário.`, 5000);
 }
 
 /* ---------- notificações ao abrir ---------- */
@@ -902,9 +966,10 @@ const findSub = (id) => state.subs.find((s) => s.id === id);
 const ACTIONS = {
   goto: (el) => go(el.dataset.to),
   'goto-redeem': () => { location.hash = 'resgate'; },
-  install: () => Phone.install(),
+  install: () => (Phone.isIOS ? openInstallSheet() : Phone.install()),
+  'install-dismiss': () => { pref.set('installDismissed', '1'); render(); },
   settings: () => openSettings(),
-  'start-real': () => { state = defaultState(); save(); ob.step = 1; render(); },
+  'start-real': () => { state = defaultState(); save(); ob.step = 1; render(); window.scrollTo(0, 0); },
   dismiss: (el) => commit((s) => s.dismissed.push(el.dataset.id)),
   undismiss: () => commit((s) => { s.dismissed = []; }),
   'sub-filter': (el) => { subFilter = el.dataset.id; render(); },
@@ -993,14 +1058,17 @@ const ACTIONS = {
     commit((s) => { s.name = name; s.settings = { ...s.settings, ...settings }; });
     Sheet.close(); UI.toast('Ajustes salvos.');
   },
-  backup: () => Phone.saveFile(`milheiro-backup-${isoLocal(new Date())}.json`, JSON.stringify(state, null, 2), 'application/json'),
+  backup: async () => {
+    const ok = await Phone.saveFile(`milheiro-backup-${isoLocal(new Date())}.json`, JSON.stringify(state, null, 2), 'application/json');
+    if (ok) { commit((s) => { s.settings.lastBackup = isoLocal(new Date()); }); UI.toast('Backup salvo.'); }
+  },
   reset: () => confirmInline('reset-yes', 'Apagar todos os dados deste aparelho?'),
-  'reset-yes': () => { state = defaultState(); save(); Sheet.close(); ob.step = 0; render(); },
+  'reset-yes': () => { state = defaultState(); save(); Sheet.close(); ob.step = 0; render(); window.scrollTo(0, 0); },
   'confirm-no': (el) => el.closest('.confirm')?.remove(),
   'sheet-close': () => Sheet.close(),
   'ob-next': () => { ob.step = Math.min(3, ob.step + 1); render(); window.scrollTo(0, 0); },
   'ob-back': () => { ob.step = Math.max(0, ob.step - 1); render(); },
-  'ob-example': () => { state = exampleState(); save(); animated = false; location.hash = 'inicio'; route(); },
+  'ob-example': () => { state = exampleState(); save(); animated = false; location.hash = 'inicio'; route(); window.scrollTo(0, 0); },
   'ob-toggle': (el) => {
     const { kind, id } = el.dataset;
     if (kind === 'services') {
@@ -1092,7 +1160,9 @@ function boot() {
     history.replaceState(null, '', location.pathname + '#comprar');
     setTimeout(() => UI.toast('Recebi o link. Veja qual cartão usar.'), 400);
   }
-  if (Phone.isIOS && !Phone.standalone()) document.documentElement.classList.add('can-install');
+  window.addEventListener('scroll', updateNav, { passive: true });
+  window.addEventListener('milheiro:installable', () => { if (current === 'inicio' && state.onboarded) render(); });
+  if (Phone.standalone()) navigator.storage?.persist?.().catch(() => {});
   window.addEventListener('hashchange', route);
   route();
   checkNotifications();

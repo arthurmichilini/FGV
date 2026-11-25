@@ -24,12 +24,9 @@ const Phone = (() => {
         return true;
       }
       if (isIOS && link.ios) {
-        const started = Date.now();
-        const timer = setTimeout(() => {
-          if (document.visibilityState === 'visible' && Date.now() - started < 2500 && web) window.location.href = web;
-        }, 1400);
-        document.addEventListener('visibilitychange', () => clearTimeout(timer), { once: true });
+        // O iPhone pergunta "Abrir no app?". Se o app não estiver instalado, o aviso oferece o site.
         window.location.href = link.ios;
+        if (web) UI.toast(`Abrindo ${label}…`, 6000, { label: 'Abrir site', href: web });
         return true;
       }
       if (web) { window.open(web, '_blank', 'noopener'); return true; }
@@ -89,7 +86,25 @@ const Phone = (() => {
     }
   }
 
-  const addToCalendar = (events, name = 'milheiro.ics') => saveFile(name, buildICS(events), 'text/calendar');
+  async function addToCalendar(events, name = 'milheiro.ics') {
+    const ics = buildICS(events);
+    if (isIOS) {
+      // No iPhone, abrir o .ics mostra a tela do Calendário com "Adicionar Tudo".
+      try {
+        const win = window.open('data:text/calendar;charset=utf-8,' + encodeURIComponent(ics), '_blank');
+        if (win) return true;
+      } catch (e) { /* tenta salvar o arquivo */ }
+    }
+    return saveFile(name, ics, 'text/calendar');
+  }
+
+  /* Número no ícone do app (iPhone com o app na tela inicial, Android e computador). */
+  async function setBadge(n) {
+    try {
+      if (!('setAppBadge' in navigator)) return;
+      if (n > 0) await navigator.setAppBadge(n); else await navigator.clearAppBadge();
+    } catch (e) { /* sem permissão: ignora */ }
+  }
 
   /* ---------- Compartilhar ---------- */
   async function share({ title, text, url }) {
@@ -111,7 +126,10 @@ const Phone = (() => {
 
   /* ---------- Notificações ---------- */
   async function enableNotifications() {
-    if (!('Notification' in window)) { UI.toast('Seu navegador não suporta notificações. No iPhone, instale o app na tela inicial primeiro.'); return false; }
+    if (!('Notification' in window)) {
+      UI.toast(isIOS ? 'No iPhone, instale o Milheiro na tela inicial primeiro. Depois ative as notificações por aqui.' : 'Seu navegador não suporta notificações.', 5000);
+      return false;
+    }
     try {
       const res = await Notification.requestPermission();
       if (res !== 'granted') { UI.toast('Notificações bloqueadas. Libere nas configurações do navegador.'); return false; }
@@ -132,14 +150,19 @@ const Phone = (() => {
 
   /* ---------- Instalação (PWA) ---------- */
   let deferredPrompt = null;
-  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.documentElement.classList.add('can-install'); });
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    window.dispatchEvent(new Event('milheiro:installable'));
+  });
+  const canPrompt = () => !!deferredPrompt;
 
   async function install() {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       await deferredPrompt.userChoice.catch(() => null);
       deferredPrompt = null;
-      document.documentElement.classList.remove('can-install');
+      window.dispatchEvent(new Event('milheiro:installable'));
       return;
     }
     if (isIOS) UI.toast('No iPhone: toque em Compartilhar e depois em “Adicionar à Tela de Início”.', 6000);
@@ -162,5 +185,5 @@ const Phone = (() => {
     return out;
   }
 
-  return { isAndroid, isIOS, standalone, openApp, haptic, addToCalendar, buildICS, saveFile, share, copy, readClipboard, enableNotifications, notify, install, parseShared };
+  return { isAndroid, isIOS, standalone, openApp, haptic, addToCalendar, buildICS, saveFile, share, copy, readClipboard, enableNotifications, notify, install, canPrompt, setBadge, parseShared };
 })();
