@@ -11,7 +11,9 @@ const numBR = (v) => {
   if (typeof v === 'number') return v;
   const s = String(v ?? '').trim().replace(/[^\d.,-]/g, '');
   if (!s) return 0;
-  return s.includes(',') ? Number(s.replace(/\./g, '').replace(',', '.')) || 0 : Number(s) || 0;
+  if (s.includes(',')) return Number(s.replace(/\./g, '').replace(',', '.')) || 0;
+  if (/^-?\d{1,3}(\.\d{3})+$/.test(s)) return Number(s.replace(/\./g, '')) || 0; // 95.000 = noventa e cinco mil
+  return Number(s) || 0;
 };
 const reduceMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 

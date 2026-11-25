@@ -1,0 +1,82 @@
+# Projeto Xcode do Milheiro, gerado pelo XcodeGen:
+#   brew install xcodegen && cd ios && xcodegen generate
+# Antes de instalar no iPhone, edite Config/Milheiro.xcconfig.
+name: Milheiro
+options:
+  deploymentTarget:
+    iOS: "17.0"
+  developmentLanguage: pt-BR
+  createIntermediateGroups: true
+configFiles:
+  Debug: Config/Milheiro.xcconfig
+  Release: Config/Milheiro.xcconfig
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+    CODE_SIGN_STYLE: Automatic
+    GENERATE_INFOPLIST_FILE: YES
+targets:
+  Milheiro:
+    type: application
+    platform: iOS
+    sources:
+      - path: Milheiro
+      - path: Shared
+      - path: UIShared
+    settings:
+      base:
+        PRODUCT_NAME: Milheiro
+        PRODUCT_BUNDLE_IDENTIFIER: $(MILHEIRO_BUNDLE_PREFIX).milheiro
+        INFOPLIST_FILE: Config/Milheiro-Info.plist
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.finance
+        CODE_SIGN_ENTITLEMENTS: Config/Milheiro.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    dependencies:
+      - target: MilheiroWidget
+      - target: MilheiroShare
+  MilheiroWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: MilheiroWidget
+      - path: Shared
+      - path: UIShared
+    settings:
+      base:
+        PRODUCT_NAME: MilheiroWidget
+        PRODUCT_BUNDLE_IDENTIFIER: $(MILHEIRO_BUNDLE_PREFIX).milheiro.widget
+        INFOPLIST_FILE: Config/MilheiroWidget-Info.plist
+        CODE_SIGN_ENTITLEMENTS: Config/MilheiroWidget.entitlements
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+  MilheiroShare:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: MilheiroShare
+      - path: Shared
+      - path: UIShared
+    settings:
+      base:
+        PRODUCT_NAME: MilheiroShare
+        PRODUCT_BUNDLE_IDENTIFIER: $(MILHEIRO_BUNDLE_PREFIX).milheiro.share
+        INFOPLIST_FILE: Config/MilheiroShare-Info.plist
+        CODE_SIGN_ENTITLEMENTS: Config/MilheiroShare.entitlements
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+schemes:
+  Milheiro:
+    build:
+      targets:
+        Milheiro: all
+    run:
+      config: Debug
+    archive:
+      config: Release

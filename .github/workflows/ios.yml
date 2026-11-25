@@ -1,0 +1,33 @@
+name: App iOS
+on:
+  push:
+    paths:
+      - 'ios/**'
+      - '.github/workflows/ios.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - uses: actions/checkout@v4
+      - name: Testes da lógica (Swift Package)
+        run: swift test
+      - name: Gerar o projeto Xcode
+        run: brew install xcodegen && xcodegen generate
+      - name: Compilar para o simulador
+        run: xcodebuild -project Milheiro.xcodeproj -scheme Milheiro -configuration Debug -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -quiet build
+      - name: Gerar .ipa sem assinatura (para Sideloadly ou AltStore)
+        run: |
+          xcodebuild -project Milheiro.xcodeproj -scheme Milheiro -configuration Release -destination 'generic/platform=iOS' -derivedDataPath build CODE_SIGNING_ALLOWED=NO -quiet build
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/Milheiro.app Payload/
+          zip -qr Milheiro-sem-assinatura.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Milheiro-ipa
+          path: ios/Milheiro-sem-assinatura.ipa
+          retention-days: 14

@@ -1,2 +1,10 @@
 dist/
 .DS_Store
+# iOS
+ios/build/
+ios/.build/
+ios/Payload/
+*.ipa
+xcuserdata/
+DerivedData/
+ios/Milheiro.xcodeproj/

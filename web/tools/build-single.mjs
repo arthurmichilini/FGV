@@ -1,7 +1,7 @@
 // Gera dist/milheiro.html: uma página única com CSS e JS embutidos (para prévias e compartilhamento).
 // Uso: node tools/build-single.mjs
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-const r = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
+const r = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8'); // caminhos relativos a web/
 const css = r('css/app.css');
 const js = ['js/catalog.js', 'js/engine.js', 'js/phone.js', 'js/app.js'].map(r).join('\n;\n');
 const body = r('index.html').split('<body>')[1].split('<script')[0];

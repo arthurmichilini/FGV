@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>pt-BR</string>
+	<key>CFBundleDisplayName</key>
+	<string>Milheiro</string>
+	<key>MilheiroAppGroup</key>
+	<string>group.$(MILHEIRO_BUNDLE_PREFIX).milheiro</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>O Milheiro adiciona ao seu Calendário lembretes de renovações, vencimentos de pontos e viagens.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>milheiro</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>nubank</string>
+		<string>mercadopago</string>
+		<string>picpay</string>
+		<string>nflx</string>
+		<string>disneyplus</string>
+		<string>hbomax</string>
+		<string>aiv</string>
+		<string>globoplay</string>
+		<string>youtube</string>
+		<string>spotify</string>
+		<string>deezer</string>
+		<string>meli</string>
+		<string>ifood</string>
+		<string>uber</string>
+		<string>shortcuts</string>
+	</array>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>comprar</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Qual cartão usar?</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>creditcard</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>resgate</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Vale o resgate?</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>star.circle</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>nova</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Nova assinatura</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>plus.circle</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>viagens</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Viagens</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>airplane</string>
+		</dict>
+	</array>
+</dict>
+</plist>

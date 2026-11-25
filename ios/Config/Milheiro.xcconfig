@@ -1,0 +1,10 @@
+// Configurações para instalar o Milheiro no seu iPhone.
+// Depois de editar, rode de novo: xcodegen generate
+
+// 1. Um identificador só seu, ao contrário de um domínio. Ex.: com.arthursilva
+//    (precisa ser único na Apple; se o Xcode disser que não está disponível, troque).
+MILHEIRO_BUNDLE_PREFIX = com.seunome
+
+// 2. Seu Team ID. Deixe vazio e escolha seu Apple ID em Signing & Capabilities no Xcode,
+//    ou cole aqui o ID que aparece em Xcode > Settings > Accounts.
+DEVELOPMENT_TEAM =
