@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
-/* Layout: one reading column. The price panel comes first because it changes every day; the fixed plan follows. */
+/* Layout: one reading column. The price panel comes first because it changes every day; the two fixed plans follow. */
 :root{
   --bg:#f3f7f6; --surface:#ffffff; --fg:#10292b; --muted:#557073; --line:#d5e2e0;
   --lagoon:#0b7a75; --lagoon-soft:#d8efec; --gold:#b98112; --gold-soft:#f6ebcf;
@@ -29,16 +29,18 @@ h2{font-size:1.55rem;font-weight:700}
 h3{font-size:1.05rem;font-weight:700}
 p{margin:0;max-width:66ch}
 a{color:var(--lagoon)}
-a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .eyebrow{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 section{display:flex;flex-direction:column;gap:16px}
 .lead{font-size:1.08rem;color:var(--muted)}
 header{display:flex;flex-direction:column;gap:14px}
-.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:6px}
-.fact{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
-.fact b{font-family:var(--display);font-size:1.15rem}
-.fact span{color:var(--muted);font-size:.85rem}
+.choice{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:6px}
+.opt{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.opt.main{border:2px solid var(--lagoon)}
+.opt b.big{font-family:var(--display);font-size:1.25rem}
+.opt .row{display:flex;justify-content:space-between;gap:12px;font-size:.9rem;border-top:1px solid var(--line);padding-top:6px}
+.opt .row span:first-child{color:var(--muted)}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:16px}
 .panel-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
@@ -47,6 +49,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vert
 th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--bg)}
 tr:last-child td{border-bottom:0}
 td.r,th.r{text-align:right;white-space:nowrap}
+tr.group td{background:var(--bg);font-weight:700;font-family:var(--display);color:var(--lagoon)}
 .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.75rem;font-weight:600;white-space:nowrap}
 .p-comprar{background:var(--good-soft);color:var(--good)}
 .p-bom{background:var(--lagoon-soft);color:var(--lagoon)}
@@ -58,21 +61,19 @@ td.r,th.r{text-align:right;white-space:nowrap}
 .log{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
 .log li{display:grid;grid-template-columns:92px 1fr;gap:12px}
 .log time{color:var(--muted);font-size:.85rem}
-.months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px}
-.m{border-radius:6px;padding:8px 2px;text-align:center;font-size:.72rem;font-weight:600;display:flex;flex-direction:column;gap:2px}
-.m small{font-weight:500;font-size:.62rem;opacity:.85}
-.m-best{background:var(--good-soft);color:var(--good)}
-.m-ok{background:var(--lagoon-soft);color:var(--lagoon)}
-.m-peak{background:var(--gold-soft);color:var(--gold)}
-.m-rain{background:var(--bad-soft);color:var(--bad)}
-.m-pick{outline:2px solid var(--fg);outline-offset:1px}
+.wx td,.wx th{text-align:center;padding:7px 4px;font-size:.72rem}
+.wx td:first-child,.wx th:first-child{text-align:left;padding-left:12px;white-space:nowrap;font-size:.82rem}
+.wx .vac{outline:2px solid var(--fg);outline-offset:-2px}
+.c{display:block;border-radius:5px;padding:5px 0;font-weight:600}
+.c-s{background:var(--good-soft);color:var(--good)}
+.c-o{background:var(--lagoon-soft);color:var(--lagoon)}
+.c-r{background:var(--bad-soft);color:var(--bad)}
 .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.8rem;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
-.days{display:flex;flex-direction:column;gap:0;border-left:2px solid var(--line);margin-left:6px}
+.days{display:flex;flex-direction:column;border-left:2px solid var(--line);margin-left:6px}
 .day{position:relative;padding:0 0 18px 20px;display:flex;flex-direction:column;gap:3px}
 .day::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--lagoon)}
 .day .when{font-size:.8rem;color:var(--muted);font-weight:600}
-.day p{color:var(--fg)}
 .day .tip{color:var(--muted);font-size:.88rem}
 .stop{font-family:var(--display);font-weight:700;color:var(--lagoon);font-size:.95rem;margin:6px 0 10px 20px}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
@@ -82,35 +83,37 @@ td.r,th.r{text-align:right;white-space:nowrap}
 ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;max-width:70ch}
 .warnbox{background:var(--warn-soft);color:var(--fg);border-radius:10px;padding:12px 14px;font-size:.92rem}
 .warnbox b{color:var(--warn)}
-@media (max-width:560px){.months{grid-template-columns:repeat(6,minmax(0,1fr))}.log li{grid-template-columns:1fr;gap:0}}
+@media (max-width:560px){.log li{grid-template-columns:1fr;gap:0}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
 <!--
   DADOS ATUALIZADOS DIARIAMENTE.
-  A tarefa diária edita SOMENTE este bloco JSON: atualiza "atualizado", os campos "hoje" e "status"
+  A tarefa diária edita SOMENTE este bloco JSON: atualiza "atualizado", "veredito", os campos "hoje" e "status"
   de cada alerta, troca "oportunidades" e acrescenta uma entrada no INÍCIO de "diario".
-  status: "comprar" | "bom" | "esperar" | "caro"
+  status: "comprar" | "bom" | "esperar" | "caro". "grupo" separa os alertas de maio e de novembro.
 -->
 <script id="dados" type="application/json">
 {
   "atualizado": "26/11/2026",
-  "veredito": "Esperar, mas olhar a Black Friday. As tarifas para março de 2027 estão na faixa normal (R$ 6.700 a R$ 7.600 por pessoa). Compre quando aparecer até R$ 5.900.",
+  "veredito": "Maio: a janela de compra é agora até fevereiro. A Black Friday (27/11) é a primeira chance real; compre se a passagem ficar até R$ 6.500 por pessoa. Novembro: ainda cedo, as tarifas só abrem por volta de dezembro e o melhor momento é de abril a julho de 2027.",
   "alertas": [
-    {"item": "Aéreo GRU → Bangkok / Phuket → GRU, econômica, por pessoa", "hoje": "R$ 6.716 a 7.598", "bom": "até R$ 5.900", "comprar": "até R$ 5.200", "status": "esperar"},
-    {"item": "Aéreo em executiva, por pessoa", "hoje": "sem cotação para mar/27", "bom": "até R$ 18.000", "comprar": "até R$ 15.000", "status": "esperar"},
-    {"item": "Voo Bangkok → Krabi (AirAsia, Thai Lion), por pessoa", "hoje": "≈ R$ 250 a 350", "bom": "até R$ 300", "comprar": "até R$ 220", "status": "esperar"},
-    {"item": "Hotel 4★ em Railay ou Ao Nang, por noite", "hoje": "≈ R$ 500 a 800", "bom": "até R$ 600", "comprar": "até R$ 450", "status": "esperar"},
-    {"item": "Bônus na transferência Nubank → LATAM Pass", "hoje": "sem campanha confirmada", "bom": "25%", "comprar": "40% ou mais", "status": "esperar"},
-    {"item": "Dólar comercial (US$ 1)", "hoje": "a preencher na 1ª atualização", "bom": "abaixo de R$ 5,30", "comprar": "abaixo de R$ 5,10", "status": "esperar"}
+    {"grupo": "Maio · Tailândia do Golfo + Bali (08 a 30/05/2027)", "item": "Aéreo GRU → Bangkok / Bali → GRU, econômica, por pessoa", "hoje": "≈ R$ 7.500 a 8.500 (estimativa)", "bom": "até R$ 6.500", "comprar": "até R$ 5.800", "status": "esperar"},
+    {"grupo": "Maio · Tailândia do Golfo + Bali (08 a 30/05/2027)", "item": "Voo Koh Samui → Bali (via Bangkok ou Singapura), por pessoa", "hoje": "sem cotação ainda", "bom": "até R$ 1.100", "comprar": "até R$ 800", "status": "esperar"},
+    {"grupo": "Maio · Tailândia do Golfo + Bali (08 a 30/05/2027)", "item": "Hotel 4★ em Koh Samui, por noite (baixa temporada)", "hoje": "≈ R$ 400 a 700", "bom": "até R$ 500", "comprar": "até R$ 380", "status": "esperar"},
+    {"grupo": "Maio · Tailândia do Golfo + Bali (08 a 30/05/2027)", "item": "Villa com piscina em Ubud, por noite", "hoje": "≈ R$ 350 a 700", "bom": "até R$ 450", "comprar": "até R$ 330", "status": "esperar"},
+    {"grupo": "Novembro · Tailândia do Andamão (13 a 28/11/2027)", "item": "Aéreo GRU → Bangkok / Phuket → GRU, econômica, por pessoa", "hoje": "tarifas ainda não abertas", "bom": "até R$ 5.900", "comprar": "até R$ 5.200", "status": "esperar"},
+    {"grupo": "Novembro · Tailândia do Andamão (13 a 28/11/2027)", "item": "Hotel 4★ em Railay ou Ao Nang, por noite", "hoje": "≈ R$ 500 a 800", "bom": "até R$ 600", "comprar": "até R$ 450", "status": "esperar"},
+    {"grupo": "Para as duas viagens", "item": "Bônus na transferência Nubank → LATAM Pass", "hoje": "sem campanha confirmada", "bom": "25%", "comprar": "40% ou mais", "status": "esperar"},
+    {"grupo": "Para as duas viagens", "item": "Dólar comercial (US$ 1)", "hoje": "a preencher na 1ª atualização", "bom": "abaixo de R$ 5,30", "comprar": "abaixo de R$ 5,10", "status": "esperar"}
   ],
   "oportunidades": [
-    {"titulo": "Qatar Airways: Black Friday com até 20% de desconto para quem é do Privilege Club", "detalhe": "Cadastro grátis no Privilege Club antes de pesquisar. Teste as datas 06/03 → 20/03/2027 com volta saindo de Phuket. Vale só se o total ficar abaixo de R$ 5.900 por pessoa."},
-    {"titulo": "Black Friday em 27/11/2026 (sexta)", "detalhe": "Emirates, Turkish e Ethiopian costumam soltar tarifas para a Ásia nesta semana. Compare no Google Flights com as datas flexíveis (±3 dias)."},
+    {"titulo": "Qatar Airways: Black Friday com até 20% de desconto para quem é do Privilege Club", "detalhe": "Vale para a viagem de maio. Cadastre-se grátis no Privilege Club e pesquise 'múltiplos destinos': São Paulo → Bangkok em 08/05 e Bali → São Paulo em 29/05/2027. A Qatar voa para os dois."},
+    {"titulo": "Black Friday em 27/11/2026 (sexta)", "detalhe": "Emirates, Turkish e Ethiopian costumam soltar tarifas para a Ásia nesta semana. Compare no Google Flights com datas flexíveis (saída entre 07 e 09/05)."},
     {"titulo": "Parcelamento sem juros", "detalhe": "Qatar e Emirates parcelam em até 10x no site brasileiro. Deixar o dinheiro rendendo numa Caixinha do Nubank enquanto paga as parcelas economiza perto de 4% a 5% do valor."}
   ],
   "diario": [
-    {"data": "26/11/2026", "texto": "Início do acompanhamento. Agregadores mostram GRU–BKK ida e volta entre R$ 6.716 (ViajaNet) e R$ 7.598 (Decolar) por pessoa; Momondo registrou R$ 7.096 nas últimas 72 h. Qatar com Black Friday para membros do Privilege Club. Nenhum bônus Nubank → LATAM Pass confirmado (as últimas campanhas foram de 25%, em setembro e outubro)."}
+    {"data": "26/11/2026", "texto": "Plano refeito para as férias de 08 a 30/05 e de 13 a 28/11/2027. Referências de hoje: GRU–BKK ida e volta entre R$ 6.716 (ViajaNet) e R$ 7.598 (Decolar); GRU–Bali com média histórica de R$ 8.077 a R$ 8.140 em maio (Mundi, Kayak), o mês mais barato do ano para Bali. Qatar com Black Friday para membros do Privilege Club. Nenhum bônus Nubank → LATAM Pass confirmado."}
   ]
 }
 </script>
@@ -118,14 +121,26 @@ ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;m
 <div class="wrap">
 
 <header>
-  <span class="eyebrow">Roteiro para o casal · plano de 2027</span>
+  <span class="eyebrow">Roteiro para o casal · férias de 2027</span>
   <h1>Tailândia 2027</h1>
-  <p class="lead">Bangkok e o mar de Andamão em 16 dias, na época seca e depois do pico de preços. Krabi, Railay, Phi Phi e Phuket, com volta saindo de Phuket para não refazer caminho.</p>
-  <div class="facts">
-    <div class="fact"><span>Datas sugeridas</span><b>06 → 21 de março</b><span>Sai num sábado, volta num domingo</span></div>
-    <div class="fact"><span>Dias úteis usados</span><b class="num">10</b><span>Depois do Carnaval e antes da Páscoa</span></div>
-    <div class="fact"><span>Orçamento do casal</span><b>R$ 22 a 33 mil</b><span>Econômico a conforto, com aéreo</span></div>
-    <div class="fact"><span>Plano B de datas</span><b>Novembro de 2027</b><span>Comprar entre abril e julho de 2027</span></div>
+  <p class="lead">Dois planos, um para cada período de férias. Recomendo maio: são 23 dias, dá para juntar as ilhas do Golfo da Tailândia com Bali, e é a época mais barata do ano para voar para lá.</p>
+  <div class="choice">
+    <div class="opt main">
+      <span class="eyebrow">Recomendado · 08 a 30 de maio</span>
+      <b class="big">Tailândia do Golfo + Bali</b>
+      <p class="note">Bangkok, Koh Tao, Koh Samui, Ubud, Nusa Penida e Uluwatu. Os dois lados estão na época seca.</p>
+      <div class="row"><span>Noites no destino</span><b class="num">19</b></div>
+      <div class="row"><span>Orçamento do casal</span><b>R$ 30 a 45 mil</b></div>
+      <div class="row"><span>Comprar o aéreo</span><b>agora até fev/2027</b></div>
+    </div>
+    <div class="opt">
+      <span class="eyebrow">Plano B · 13 a 28 de novembro</span>
+      <b class="big">Tailândia do Andamão</b>
+      <p class="note">Bangkok, Krabi e Railay, Phi Phi e Phuket, no começo da época seca do mar de Andamão.</p>
+      <div class="row"><span>Noites no destino</span><b class="num">12</b></div>
+      <div class="row"><span>Orçamento do casal</span><b>R$ 22 a 34 mil</b></div>
+      <div class="row"><span>Comprar o aéreo</span><b>abr a jul/2027</b></div>
+    </div>
   </div>
 </header>
 
@@ -146,97 +161,110 @@ ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;m
     <ul class="opps" id="opps"></ul>
     <h3>Diário de preços</h3>
     <ul class="log" id="diario"></ul>
-    <p class="note">Os valores de hoje vêm de buscadores (Decolar, ViajaNet, Momondo, Google Flights) e mudam a cada consulta. Confirme no site da companhia antes de pagar.</p>
+    <p class="note">Os valores de hoje vêm de buscadores (Decolar, ViajaNet, Momondo, Kayak, Google Flights) e mudam a cada consulta. Confirme no site da companhia antes de pagar.</p>
   </div>
 </section>
 
 <section aria-labelledby="quando">
-  <h2 id="quando">Por que março</h2>
-  <p>No mar de Andamão (Krabi, Phi Phi, Phuket) a estação seca vai de novembro a abril. Dezembro e janeiro são o pico de preço. Em março o mar está calmo e transparente, as Ilhas Similan estão abertas e as passagens saem do Brasil sem a demanda de férias.</p>
-  <div class="months" role="img" aria-label="Clima e preço no mar de Andamão por mês">
-    <div class="m m-peak">jan<small>pico</small></div>
-    <div class="m m-best">fev<small>seco</small></div>
-    <div class="m m-best m-pick">mar<small>escolha</small></div>
-    <div class="m m-ok">abr<small>quente</small></div>
-    <div class="m m-rain">mai<small>chuva</small></div>
-    <div class="m m-rain">jun<small>chuva</small></div>
-    <div class="m m-rain">jul<small>chuva</small></div>
-    <div class="m m-rain">ago<small>chuva</small></div>
-    <div class="m m-rain">set<small>chuva</small></div>
-    <div class="m m-rain">out<small>chuva</small></div>
-    <div class="m m-ok">nov<small>plano B</small></div>
-    <div class="m m-peak">dez<small>pico</small></div>
+  <h2 id="quando">Clima nas suas férias</h2>
+  <p>A Tailândia tem dois mares com chuvas em épocas opostas. Em maio começam as monções no Andamão (Phuket, Krabi), mas o Golfo (Samui, Tao) segue seco, e Bali entra na estação seca. Em novembro é o contrário: o Andamão abre a temporada e o Golfo tem o mês mais chuvoso.</p>
+  <div class="tbl">
+    <table class="wx" aria-label="Clima por região e mês; as colunas contornadas são os meses das suas férias">
+      <thead><tr><th>Região</th><th>jan</th><th>fev</th><th>mar</th><th>abr</th><th class="vac">mai</th><th>jun</th><th>jul</th><th>ago</th><th>set</th><th>out</th><th class="vac">nov</th><th>dez</th></tr></thead>
+      <tbody>
+        <tr><td>Andamão (Phuket, Krabi)</td><td><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td><td><i class="c c-o">ok</i></td><td class="vac"><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td><td class="vac"><i class="c c-o">ok</i></td><td><i class="c c-s">seco</i></td></tr>
+        <tr><td>Golfo (Samui, Tao)</td><td><i class="c c-o">ok</i></td><td><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td><td class="vac"><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td><td><i class="c c-o">ok</i></td><td><i class="c c-r">chuva</i></td><td class="vac"><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td></tr>
+        <tr><td>Bali</td><td><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td><td><i class="c c-o">ok</i></td><td class="vac"><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td><td><i class="c c-o">ok</i></td><td class="vac"><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td></tr>
+        <tr><td>Chiang Mai (norte)</td><td><i class="c c-s">seco</i></td><td><i class="c c-o">fumaça</i></td><td><i class="c c-r">fumaça</i></td><td><i class="c c-r">fumaça</i></td><td class="vac"><i class="c c-o">ok</i></td><td><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td><td><i class="c c-r">chuva</i></td><td><i class="c c-o">ok</i></td><td class="vac"><i class="c c-s">seco</i></td><td><i class="c c-s">seco</i></td></tr>
+      </tbody>
+    </table>
   </div>
   <div class="legend">
-    <span><i style="background:var(--good)"></i>Seco e preço médio</span>
-    <span><i style="background:var(--lagoon)"></i>Bom, com algum risco ou calor</span>
-    <span><i style="background:var(--gold)"></i>Seco, mas caro</span>
-    <span><i style="background:var(--bad)"></i>Monções no lado de Andamão</span>
+    <span><i style="background:var(--good)"></i>Seco, melhor época</span>
+    <span><i style="background:var(--lagoon)"></i>Bom, com pancadas ou calor forte</span>
+    <span><i style="background:var(--bad)"></i>Monções ou fumaça das queimadas</span>
   </div>
-  <p class="note">Em março o norte (Chiang Mai) está na época das queimadas, com fumaça e ar ruim. Por isso ele fica fora deste roteiro. No plano B de novembro, troque Phuket por 3 noites em Chiang Mai.</p>
+  <p class="note">Em maio a Tailândia está em baixa temporada: hotéis cerca de 30% mais baratos e menos gente nas praias. O calor passa de 33 °C em Bangkok. No feriado de Corpus Christi (27/05) vocês já estarão em Bali.</p>
 </section>
 
-<section aria-labelledby="roteiro">
-  <h2 id="roteiro">Roteiro dia a dia</h2>
-  <p class="note">Compre a passagem como "múltiplos destinos": ida São Paulo → Bangkok e volta Phuket → São Paulo. Com Qatar, Emirates ou Turkish o preço costuma ser o mesmo da ida e volta simples.</p>
+<section aria-labelledby="maio">
+  <h2 id="maio">Plano de maio: Golfo da Tailândia + Bali</h2>
+  <p class="note">Compre a passagem como "múltiplos destinos": ida São Paulo → Bangkok em 08/05 e volta Bali → São Paulo em 29/05. Qatar e Emirates voam para os dois, com conexão em Doha ou Dubai.</p>
 
   <div class="stop">Ida</div>
   <div class="days">
-    <div class="day"><span class="when">Sáb 06/03 e dom 07/03</span><p>Saída de Guarulhos à noite, conexão em Doha, Dubai ou Istambul. São cerca de 28 a 32 horas de viagem, e a Tailândia está 10 horas à frente.</p><p class="tip">Escolha uma conexão de 2 a 4 horas. Escalas acima de 8 horas podem dar direito a hotel da companhia.</p></div>
+    <div class="day"><span class="when">Sáb 08/05 e dom 09/05</span><p>Saída de Guarulhos à noite. São cerca de 28 a 32 horas de viagem, e a Tailândia está 10 horas à frente.</p></div>
   </div>
 
   <div class="stop">Bangkok · 3 noites</div>
   <div class="days">
-    <div class="day"><span class="when">Seg 08/03</span><p>Chegada e hotel à beira do rio Chao Phraya. Fim de tarde no Asiatique ou num barco pelo rio.</p></div>
-    <div class="day"><span class="when">Ter 09/03</span><p>Grande Palácio cedo (abre às 8h30), Wat Pho e massagem tailandesa na escola do templo. Barco de 4 baht até Wat Arun para o pôr do sol. Drinque num rooftop.</p><p class="tip">Ombros e joelhos cobertos nos templos.</p></div>
-    <div class="day"><span class="when">Qua 10/03</span><p>Mercado do trem de Maeklong e mercado flutuante de Amphawa (meio dia) ou as ruínas de Ayutthaya. À noite, comida de rua em Chinatown (Yaowarat).</p></div>
+    <div class="day"><span class="when">Seg 10/05</span><p>Chegada e hotel à beira do rio Chao Phraya. Fim de tarde no Asiatique.</p></div>
+    <div class="day"><span class="when">Ter 11/05</span><p>Grande Palácio cedo, antes do calor, Wat Pho e massagem tailandesa na escola do templo. Barco até Wat Arun para o pôr do sol e drinque num rooftop.</p><p class="tip">Ombros e joelhos cobertos nos templos.</p></div>
+    <div class="day"><span class="when">Qua 12/05</span><p>Mercado do trem de Maeklong e mercado flutuante de Amphawa ou as ruínas de Ayutthaya. À noite, comida de rua em Chinatown (Yaowarat).</p></div>
   </div>
 
-  <div class="stop">Krabi: Ao Nang e Railay · 4 noites</div>
+  <div class="stop">Koh Tao · 3 noites</div>
   <div class="days">
-    <div class="day"><span class="when">Qui 11/03</span><p>Voo cedo de Bangkok (DMK) para Krabi, cerca de 1h20. Hotel em Railay, só acessível de barco, ou em Ao Nang, mais barato. Pôr do sol em Railay West.</p></div>
-    <div class="day"><span class="when">Sex 12/03</span><p>Praia de Phra Nang, a caverna e a trilha do mirante de Railay. Caiaque entre os paredões de calcário.</p></div>
-    <div class="day"><span class="when">Sáb 13/03</span><p>Passeio das 4 ilhas (Poda, Chicken, Tup e Phra Nang) ou Ilhas Hong de lancha, com snorkel.</p><p class="tip">Saia no primeiro horário para chegar antes dos grupos.</p></div>
-    <div class="day"><span class="when">Dom 14/03</span><p>Emerald Pool e as fontes termais, ou um dia livre na praia. Mercado noturno de Krabi Town.</p></div>
+    <div class="day"><span class="when">Qui 13/05</span><p>Voo curto de Bangkok para Chumphon e ferry rápido Lomprayah até Koh Tao, cerca de 2 horas. Os dois saem vendidos num bilhete só.</p></div>
+    <div class="day"><span class="when">Sex 14/05</span><p>Volta de barco na ilha com snorkel na baía de Shark e em Aow Leuk. Koh Tao é um dos lugares mais baratos do mundo para tirar a credencial de mergulho (cerca de R$ 1.800 por pessoa, 3 a 4 dias).</p></div>
+    <div class="day"><span class="when">Sáb 15/05</span><p>Koh Nang Yuan de manhã, as três ilhas unidas pela faixa de areia, e o mirante no fim da tarde.</p><p class="tip">Chegue antes das 10h, quando chegam os barcos de passeio.</p></div>
   </div>
 
-  <div class="stop">Koh Phi Phi · 2 noites</div>
+  <div class="stop">Koh Samui · 4 noites</div>
   <div class="days">
-    <div class="day"><span class="when">Seg 15/03</span><p>Ferry de Ao Nang para Phi Phi, cerca de 2 horas. Subida ao mirante no fim da tarde.</p></div>
-    <div class="day"><span class="when">Ter 16/03</span><p>Barco cedo para Maya Bay, a lagoa de Pileh e a ilha Bamboo. Snorkel com peixes e corais.</p><p class="tip">Maya Bay fecha todo ano em agosto e setembro. Em março está aberta.</p></div>
+    <div class="day"><span class="when">Dom 16/05</span><p>Ferry para Samui, cerca de 1h30. Hotel em Chaweng Noi, Lamai ou Bophut, a vila de pescadores.</p></div>
+    <div class="day"><span class="when">Seg 17/05</span><p>Parque Marinho de Ang Thong de barco: caiaque, a lagoa esmeralda e o mirante de Koh Wua Talap.</p></div>
+    <div class="day"><span class="when">Ter 18/05</span><p>Dia de praia em Silver Beach e cachoeira de Na Muang. Jantar na feira do Fisherman's Village (às sextas é maior).</p></div>
+    <div class="day"><span class="when">Qua 19/05</span><p>Livre: spa, aula de culinária tailandesa ou um passeio de um dia a Koh Phangan.</p></div>
   </div>
 
-  <div class="stop">Phuket · 3 noites</div>
+  <div class="stop">Bali · 9 noites</div>
   <div class="days">
-    <div class="day"><span class="when">Qua 17/03</span><p>Ferry para Phuket, cerca de 2 horas. Hotel em Kata ou Karon, mais calmas que Patong. Big Buddha no fim do dia.</p></div>
-    <div class="day"><span class="when">Qui 18/03</span><p>Ilhas Similan de lancha, o melhor snorkel do país, abertas de outubro a maio. Ou a baía de Phang Nga, com a ilha James Bond e a vila flutuante de Koh Panyee.</p></div>
-    <div class="day"><span class="when">Sex 19/03</span><p>Old Phuket Town de manhã, spa à tarde e pôr do sol no Cabo Promthep.</p></div>
+    <div class="day"><span class="when">Qui 20/05</span><p>Voo Samui → Bali com conexão em Bangkok ou Singapura (Bangkok Airways, AirAsia, Scoot). Primeira noite perto do aeroporto ou direto para Ubud, cerca de 1h30 de carro.</p></div>
+    <div class="day"><span class="when">Sex 21/05 a dom 23/05 · Ubud</span><p>Terraços de arroz de Tegallalang, o templo das águas Tirta Empul, a floresta dos macacos e o nascer do sol no vulcão Batur, saindo às 2h. Villa com piscina custa de R$ 350 a R$ 700 por noite.</p></div>
+    <div class="day"><span class="when">Seg 24/05 e ter 25/05 · Nusa Penida</span><p>Lancha de Sanur, cerca de 40 minutos. Kelingking, Diamond Beach e snorkel com as raias-manta em Manta Point.</p><p class="tip">As estradas da ilha são ruins. Contrate motorista em vez de alugar moto.</p></div>
+    <div class="day"><span class="when">Qua 26/05 a sex 28/05 · Uluwatu</span><p>Praias de penhasco (Padang Padang, Melasti, Bingin), dança Kecak no templo de Uluwatu ao pôr do sol e jantar de frutos do mar na areia em Jimbaran.</p></div>
   </div>
 
   <div class="stop">Volta</div>
   <div class="days">
-    <div class="day"><span class="when">Sáb 20/03 e dom 21/03</span><p>Voo de Phuket com conexão no Golfo ou em Istambul. Chegada em São Paulo no domingo.</p></div>
+    <div class="day"><span class="when">Sáb 29/05 e dom 30/05</span><p>Voo de Bali com conexão em Doha ou Dubai. Chegada em São Paulo no domingo, último dia das férias.</p></div>
   </div>
+  <p class="note">Quer mais praia e menos deslocamento? Troque Nusa Penida por 2 noites nas Ilhas Gili, de lancha rápida a partir de Bali.</p>
+</section>
+
+<section aria-labelledby="novembro">
+  <h2 id="novembro">Plano B de novembro: mar de Andamão</h2>
+  <p class="note">Ida São Paulo → Bangkok em 13/11 e volta Phuket → São Paulo em 27/11/2027. O festival das lanternas de Chiang Mai (Yi Peng) deve cair entre 13 e 15/11, então vocês chegariam no fim dele. Ele não está no roteiro.</p>
+  <div class="days">
+    <div class="day"><span class="when">Sáb 13/11 e dom 14/11</span><p>Viagem, chegada a Bangkok na segunda.</p></div>
+    <div class="day"><span class="when">Seg 15/11 a qua 17/11 · Bangkok, 3 noites</span><p>Grande Palácio, Wat Pho, Wat Arun, Chinatown e um mercado flutuante.</p></div>
+    <div class="day"><span class="when">Qui 18/11 a dom 21/11 · Krabi e Railay, 4 noites</span><p>Railay, a praia de Phra Nang, o passeio das 4 ilhas ou as Ilhas Hong, e a Emerald Pool.</p></div>
+    <div class="day"><span class="when">Seg 22/11 e ter 23/11 · Koh Phi Phi, 2 noites</span><p>Mirante, Maya Bay cedo, a lagoa de Pileh e a ilha Bamboo.</p></div>
+    <div class="day"><span class="when">Qua 24/11 a sex 26/11 · Phuket, 3 noites</span><p>Kata ou Karon, Ilhas Similan (abertas desde meados de outubro), Old Phuket Town e o Cabo Promthep.</p></div>
+    <div class="day"><span class="when">Sáb 27/11 e dom 28/11</span><p>Volta saindo de Phuket, chegada em São Paulo no domingo.</p></div>
+  </div>
+  <p class="note">Na primeira quinzena de novembro ainda pode haver pancadas de chuva no Andamão; no fim do mês o tempo firma. Se preferir trocar praia por cultura, 3 noites em Chiang Mai no lugar de Phuket também funcionam.</p>
 </section>
 
 <section aria-labelledby="orcamento">
   <h2 id="orcamento">Orçamento do casal</h2>
   <div class="tbl">
     <table>
-      <thead><tr><th>Item</th><th class="r">Econômico</th><th class="r">Conforto</th><th>Como economizar</th></tr></thead>
+      <thead><tr><th>Item</th><th class="r">Maio econ.</th><th class="r">Maio conforto</th><th class="r">Nov econ.</th><th class="r">Nov conforto</th></tr></thead>
       <tbody>
-        <tr><td>Aéreo internacional (2 pessoas)</td><td class="r num">11.000</td><td class="r num">13.400</td><td>Econômico já considera o alerta de R$ 5.500 por pessoa</td></tr>
-        <tr><td>Voo Bangkok → Krabi</td><td class="r num">600</td><td class="r num">700</td><td>Com bagagem despachada incluída</td></tr>
-        <tr><td>Ferries e traslados</td><td class="r num">900</td><td class="r num">1.300</td><td>Compre os ferries no 12Go ou no próprio cais</td></tr>
-        <tr><td>Hospedagem, 12 noites</td><td class="r num">4.200</td><td class="r num">8.400</td><td>R$ 350 ou R$ 700 por noite; Agoda costuma ser o mais barato lá</td></tr>
-        <tr><td>Alimentação</td><td class="r num">2.400</td><td class="r num">4.200</td><td>Comida de rua boa por R$ 15 a R$ 30 o prato</td></tr>
-        <tr><td>Passeios</td><td class="r num">2.500</td><td class="r num">4.500</td><td>Similan e Phi Phi são os mais caros</td></tr>
-        <tr><td>eSIM, seguro e transporte local</td><td class="r num">700</td><td class="r num">1.200</td><td>Grab no lugar de táxi; seguro pode vir do cartão</td></tr>
-        <tr><th>Total em reais</th><th class="r num">22.300</th><th class="r num">33.700</th><th></th></tr>
+        <tr><td>Aéreo internacional (2 pessoas)</td><td class="r num">12.000</td><td class="r num">15.000</td><td class="r num">11.000</td><td class="r num">13.400</td></tr>
+        <tr><td>Voos internos e ferries</td><td class="r num">3.500</td><td class="r num">4.500</td><td class="r num">1.500</td><td class="r num">2.000</td></tr>
+        <tr><td>Hospedagem</td><td class="r num">6.300</td><td class="r num">12.400</td><td class="r num">4.200</td><td class="r num">8.400</td></tr>
+        <tr><td>Alimentação</td><td class="r num">3.400</td><td class="r num">5.700</td><td class="r num">2.400</td><td class="r num">4.200</td></tr>
+        <tr><td>Passeios</td><td class="r num">3.000</td><td class="r num">5.500</td><td class="r num">2.500</td><td class="r num">4.500</td></tr>
+        <tr><td>Visto de Bali, taxa turística, eSIM, seguro e transporte</td><td class="r num">1.450</td><td class="r num">1.950</td><td class="r num">700</td><td class="r num">1.200</td></tr>
+        <tr><th>Total em reais</th><th class="r num">29.650</th><th class="r num">45.050</th><th class="r num">22.300</th><th class="r num">33.700</th></tr>
+        <tr><td>Por dia de viagem</td><td class="r num">1.290</td><td class="r num">1.960</td><td class="r num">1.390</td><td class="r num">2.110</td></tr>
       </tbody>
     </table>
   </div>
-  <p class="note">Estimativas de novembro de 2026, com câmbio perto de R$ 5,40 e 1 baht perto de R$ 0,16. Se a passagem for comprada pelo preço de hoje, some de R$ 2.400 a R$ 4.200 ao total.</p>
+  <p class="note">Estimativas de novembro de 2026, com câmbio perto de R$ 5,40. Maio sai mais caro no total porque são 19 noites e dois países, mas fica mais barato por dia: a baixa temporada derruba as diárias. O aéreo econômico já considera os alertas de compra (R$ 6.000 em maio e R$ 5.500 em novembro, por pessoa).</p>
 </section>
 
 <section aria-labelledby="cartoes">
@@ -244,41 +272,24 @@ ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;m
   <p>Você me contou que tem <b>Nubank</b>, assina o <b>Meli+</b> e tem TotalPass e Gympass pela empresa. Não sei se o seu Nubank é o Ultravioleta nem quantos pontos você tem. Me diga para eu ajustar o plano.</p>
   <div class="cards">
     <div class="card"><h3>Pague as passagens no Nubank</h3><p>Se for o Ultravioleta (Mastercard Black), a compra acumula pontos e costuma liberar o seguro viagem do cartão, que só vale quando a passagem é paga com ele. Emita o bilhete do seguro no app antes de viajar e confira a cobertura médica.</p></div>
-    <div class="card"><h3>Parcele e deixe o dinheiro rendendo</h3><p>Pague em 10x sem juros e guarde o valor total numa Caixinha do Nubank. Com o CDI perto de 1% ao mês, o rendimento cobre parte do voo doméstico.</p></div>
+    <div class="card"><h3>Parcele e deixe o dinheiro rendendo</h3><p>Pague em 10x sem juros e guarde o valor total numa Caixinha do Nubank. Com o CDI perto de 1% ao mês, o rendimento cobre parte dos voos internos.</p></div>
     <div class="card"><h3>Pontos Nubank só com bônus</h3><p>Ative o Modo LATAM Pass (1 ponto = 1 milha) só se for usar as milhas. Transfira apenas em campanhas de 25% ou mais. Com saldo pequeno, use as milhas no voo para São Paulo ou num upgrade, não na passagem para a Ásia.</p></div>
-    <div class="card"><h3>Gastos lá: cuidado com o IOF</h3><p>Compra no cartão de crédito em moeda estrangeira paga 3,5% de IOF. Uma conta global em dólar paga 1,1%. Em R$ 8 mil de gastos lá, a diferença é de cerca de R$ 190. Os caixas eletrônicos tailandeses cobram 220 baht (cerca de R$ 35) por saque, então saque pouco e valores maiores.</p></div>
-    <div class="card"><h3>Meli+ e Mercado Pago</h3><p>Ajuda pouco na viagem em si. Use para os itens de preparo com frete grátis: adaptador de tomada universal, bolsa estanque, protetor solar e capa de chuva.</p></div>
-    <div class="card"><h3>Programas de fidelidade grátis</h3><p>Cadastre os dois no Qatar Privilege Club e no Emirates Skywards antes de comprar. A Qatar dá desconto a membros na Black Friday e os voos de 30 horas rendem Avios.</p></div>
+    <div class="card"><h3>Gastos lá: cuidado com o IOF</h3><p>Compra no cartão de crédito em moeda estrangeira paga 3,5% de IOF. Uma conta global em dólar paga 1,1%. Em R$ 10 mil de gastos lá, a diferença é de cerca de R$ 240. Caixas eletrônicos na Tailândia cobram 220 baht por saque, e em Bali prefira os caixas dentro de bancos.</p></div>
+    <div class="card"><h3>Meli+ e Mercado Pago</h3><p>Ajuda pouco na viagem em si. Use para os itens de preparo com frete grátis: adaptador de tomada universal, bolsa estanque, protetor solar de recife e capa de chuva.</p></div>
+    <div class="card"><h3>Programas de fidelidade grátis</h3><p>Cadastre os dois no Qatar Privilege Club e no Emirates Skywards antes de comprar. A Qatar dá desconto a membros na Black Friday, e os voos de 30 horas rendem Avios para a viagem de novembro.</p></div>
   </div>
-</section>
-
-<section aria-labelledby="alternativas">
-  <h2 id="alternativas">Outras opções paradisíacas na Ásia</h2>
-  <div class="tbl">
-    <table>
-      <thead><tr><th>Destino</th><th>Melhor época</th><th>Custo no destino</th><th>Entrada para brasileiros</th><th>Veredito</th></tr></thead>
-      <tbody>
-        <tr><td><b>Tailândia</b> (Krabi, Phuket)</td><td>nov a abr</td><td>Baixo</td><td>Sem visto, cadastro TDAC</td><td><span class="pill p-comprar">Melhor custo-benefício</span></td></tr>
-        <tr><td><b>Filipinas</b> (Palawan, El Nido)</td><td>dez a mai</td><td>Baixo</td><td>Sem visto (confirme)</td><td><span class="pill p-bom">Mais selvagem, voos piores</span></td></tr>
-        <tr><td><b>Vietnã</b> (Phu Quoc, Ha Long)</td><td>dez a abr</td><td>Baixo</td><td>Visto eletrônico</td><td><span class="pill p-bom">Boa cultura, praia média</span></td></tr>
-        <tr><td><b>Bali</b> (Indonésia)</td><td>abr a out</td><td>Médio</td><td>Visto na chegada e taxa turística</td><td><span class="pill p-bom">Para viajar entre maio e setembro</span></td></tr>
-        <tr><td><b>Maldivas</b></td><td>dez a abr</td><td>Muito alto</td><td>Sem visto</td><td><span class="pill p-caro">Só como extensão de 3 noites</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p class="note">Para uma lua de mel, as Maldivas cabem como 3 noites na volta, com conexão em Dubai ou Doha. Hospedagem lá custa de R$ 2 mil a R$ 6 mil por noite.</p>
 </section>
 
 <section aria-labelledby="checklist">
   <h2 id="checklist">Antes de viajar</h2>
-  <div class="warnbox"><b>Febre amarela:</b> a Tailândia exige o Certificado Internacional de Vacinação (CIVP) de quem chega do Brasil. Tome a vacina pelo menos 10 dias antes e emita o certificado no app gov.br ou na Anvisa.</div>
+  <div class="warnbox"><b>Febre amarela:</b> a Tailândia exige o Certificado Internacional de Vacinação (CIVP) de quem chega do Brasil. Tome a vacina pelo menos 10 dias antes e emita o certificado no app gov.br ou na Anvisa. Leve-o também para Bali.</div>
   <ul class="plain">
-    <li>Passaporte válido por pelo menos 6 meses depois da volta, ou seja, até setembro de 2027.</li>
-    <li>TDAC (cartão de chegada digital), gratuito, nos 3 dias antes de chegar. Use só o site oficial tdac.immigration.go.th; há sites que cobram pelo mesmo formulário.</li>
-    <li>Brasileiros entram sem visto para turismo. As fontes divergem sobre o prazo (60 ou 90 dias); para 16 dias não faz diferença.</li>
-    <li>Seguro com cobertura médica alta. Passeio de lancha e mergulho às vezes precisam de cobertura específica.</li>
-    <li>eSIM tailandês (AIS, TrueMove ou DTAC) por cerca de R$ 60 a R$ 90 para 15 dias.</li>
-    <li>Tomadas tipo A, B, C e O em 220 V. O adaptador universal resolve.</li>
+    <li>Passaporte válido por pelo menos 6 meses depois da chegada. Validade até junho de 2028 cobre as duas viagens.</li>
+    <li>Tailândia: brasileiros entram sem visto para turismo. Preencha o TDAC (cartão de chegada digital), gratuito, nos 3 dias antes de chegar, só no site oficial tdac.immigration.go.th.</li>
+    <li>Bali: visto na chegada de 500 mil rúpias (cerca de R$ 175) por pessoa, que pode ser pedido online (e-VOA) uma semana antes, mais a taxa turística de 150 mil rúpias (cerca de R$ 50).</li>
+    <li>Seguro com cobertura médica alta. Mergulho e moto às vezes precisam de cobertura específica.</li>
+    <li>eSIM para cada país (AIS ou TrueMove na Tailândia, Telkomsel em Bali), cerca de R$ 60 a R$ 90 cada.</li>
+    <li>Tomadas: tipos A, B, C e O na Tailândia, C e F em Bali, sempre 220 V.</li>
   </ul>
 </section>
 
@@ -286,9 +297,11 @@ ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;m
   <h2 id="fontes">Fontes</h2>
   <ul class="plain note">
     <li><a href="https://www.decolar.com/passagens-aereas/sao/bkk/passagens-aereas-para-bangkok-saindo-de-sao+paulo">Decolar: São Paulo → Bangkok</a> · <a href="https://www.viajanet.com.br/passagens-aereas/bkk/passagens-para-bangkok">ViajaNet</a> · <a href="https://www.momondo.com.br/passagem/sao-paulo/bangkok">Momondo</a></li>
+    <li><a href="https://www.kayak.com.br/voos/Sao-Paulo-SAO/Denpasar-Bali-Ngurah-Rai-DPS">Kayak: São Paulo → Bali</a> · <a href="https://www.mundi.com.br/voos/Sao-Paulo-SAO/Denpasar-Bali-Ngurah-Rai-DPS.ksp">Mundi: São Paulo → Bali</a></li>
     <li><a href="https://www.melhoresdestinos.com.br/black-friday-2026-viagens-passagens-pacotes">Melhores Destinos: Black Friday 2026</a> · <a href="https://www.techtudo.com.br/listas/2026/11/passagem-aerea-na-black-friday-veja-cupons-e-ofertas-em-milhas-bf2026-edsoftwares.ghtml">TechTudo: passagens na Black Friday</a></li>
     <li><a href="https://latampass.latam.com/pt_br/junte-milhas/nubank">LATAM Pass: parceria Nubank</a> · <a href="https://altarendablog.com.br/2026/07/27/nubank-atualiza-modo-latam-pass-em-julho-de-2026-vale-a-pena-saiba-como-acumular-milhas-com-o-ultravioleta/">Modo LATAM Pass (jul/2026)</a> · <a href="https://capitalfinanceiro.com.br/latam-pass-25-bonus-transferencia-pontos-nubank-ultravioleta/">Bônus de 25% (out/2026)</a></li>
-    <li><a href="https://en.wikipedia.org/wiki/Thailand_Digital_Arrival_Card">TDAC</a> · <a href="https://guia.melhoresdestinos.com.br/documentos-tailandia.html">Documentos para a Tailândia</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Thailand_Digital_Arrival_Card">TDAC</a> · <a href="https://guia.melhoresdestinos.com.br/documentos-tailandia.html">Documentos para a Tailândia</a> · <a href="https://bali.com/bali/bali-visa-indonesia-entry-regulations/bali-visa-for-brazilians-brazil-passport/">Visto de Bali para brasileiros</a></li>
+    <li><a href="https://www.umetravel.com/loy-krathong-festival/dates.html">Datas do Loy Krathong e Yi Peng 2027</a></li>
   </ul>
 </section>
 
@@ -301,9 +314,12 @@ ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;m
   var label = {comprar:'Compre já', bom:'Bom preço', esperar:'Esperar', caro:'Caro'};
   document.getElementById('atualizado').textContent = d.atualizado;
   document.getElementById('veredito').textContent = d.veredito;
-  document.getElementById('alertas').innerHTML = d.alertas.map(function(a){
-    return '<tr><td>'+esc(a.item)+'</td><td class="r num">'+esc(a.hoje)+'</td><td class="r num">'+esc(a.bom)+'</td><td class="r num">'+esc(a.comprar)+'</td><td><span class="pill p-'+esc(a.status)+'">'+esc(label[a.status]||a.status)+'</span></td></tr>';
-  }).join('');
+  var last = null, rows = '';
+  d.alertas.forEach(function(a){
+    if (a.grupo && a.grupo !== last){ rows += '<tr class="group"><td colspan="5">'+esc(a.grupo)+'</td></tr>'; last = a.grupo; }
+    rows += '<tr><td>'+esc(a.item)+'</td><td class="r num">'+esc(a.hoje)+'</td><td class="r num">'+esc(a.bom)+'</td><td class="r num">'+esc(a.comprar)+'</td><td><span class="pill p-'+esc(a.status)+'">'+esc(label[a.status]||a.status)+'</span></td></tr>';
+  });
+  document.getElementById('alertas').innerHTML = rows;
   document.getElementById('opps').innerHTML = d.oportunidades.map(function(o){
     return '<li><b>'+esc(o.titulo)+'</b><small>'+esc(o.detalhe)+'</small></li>';
   }).join('');
