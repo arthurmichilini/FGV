@@ -1,0 +1,314 @@
+<title>Tailândia 2027</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column. The price panel comes first because it changes every day; the fixed plan follows. */
+:root{
+  --bg:#f3f7f6; --surface:#ffffff; --fg:#10292b; --muted:#557073; --line:#d5e2e0;
+  --lagoon:#0b7a75; --lagoon-soft:#d8efec; --gold:#b98112; --gold-soft:#f6ebcf;
+  --good:#1d7a3e; --good-soft:#dcf1e2; --warn:#9a6a00; --warn-soft:#f8ecc8; --bad:#a3352b; --bad-soft:#f7dedb;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Inter", system-ui, -apple-system, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1819; --surface:#122426; --fg:#e3efed; --muted:#93acaa; --line:#24403f;
+  --lagoon:#4fc3b9; --lagoon-soft:#133b39; --gold:#e3b54c; --gold-soft:#3a2f12;
+  --good:#6fd08f; --good-soft:#143524; --warn:#e8c25a; --warn-soft:#3a3013; --bad:#f08a7e; --bad-soft:#3d1c19; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1819; --surface:#122426; --fg:#e3efed; --muted:#93acaa; --line:#24403f;
+  --lagoon:#4fc3b9; --lagoon-soft:#133b39; --gold:#e3b54c; --gold-soft:#3a2f12;
+  --good:#6fd08f; --good-soft:#143524; --warn:#e8c25a; --warn-soft:#3a3013; --bad:#f08a7e; --bad-soft:#3d1c19; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--body);margin:0}
+.wrap{max-width:880px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:700;letter-spacing:-.02em}
+h2{font-size:1.55rem;font-weight:700}
+h3{font-size:1.05rem;font-weight:700}
+p{margin:0;max-width:66ch}
+a{color:var(--lagoon)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.eyebrow{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+section{display:flex;flex-direction:column;gap:16px}
+.lead{font-size:1.08rem;color:var(--muted)}
+header{display:flex;flex-direction:column;gap:14px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:6px}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.fact b{font-family:var(--display);font-size:1.15rem}
+.fact span{color:var(--muted);font-size:.85rem}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.panel-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right;white-space:nowrap}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.75rem;font-weight:600;white-space:nowrap}
+.p-comprar{background:var(--good-soft);color:var(--good)}
+.p-bom{background:var(--lagoon-soft);color:var(--lagoon)}
+.p-esperar{background:var(--warn-soft);color:var(--warn)}
+.p-caro{background:var(--bad-soft);color:var(--bad)}
+.opps{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.opps li{border-left:3px solid var(--gold);padding:4px 0 4px 12px}
+.opps small{color:var(--muted);display:block}
+.log{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.log li{display:grid;grid-template-columns:92px 1fr;gap:12px}
+.log time{color:var(--muted);font-size:.85rem}
+.months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px}
+.m{border-radius:6px;padding:8px 2px;text-align:center;font-size:.72rem;font-weight:600;display:flex;flex-direction:column;gap:2px}
+.m small{font-weight:500;font-size:.62rem;opacity:.85}
+.m-best{background:var(--good-soft);color:var(--good)}
+.m-ok{background:var(--lagoon-soft);color:var(--lagoon)}
+.m-peak{background:var(--gold-soft);color:var(--gold)}
+.m-rain{background:var(--bad-soft);color:var(--bad)}
+.m-pick{outline:2px solid var(--fg);outline-offset:1px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.8rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.days{display:flex;flex-direction:column;gap:0;border-left:2px solid var(--line);margin-left:6px}
+.day{position:relative;padding:0 0 18px 20px;display:flex;flex-direction:column;gap:3px}
+.day::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--lagoon)}
+.day .when{font-size:.8rem;color:var(--muted);font-weight:600}
+.day p{color:var(--fg)}
+.day .tip{color:var(--muted);font-size:.88rem}
+.stop{font-family:var(--display);font-weight:700;color:var(--lagoon);font-size:.95rem;margin:6px 0 10px 20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card p{font-size:.92rem}
+.note{font-size:.85rem;color:var(--muted)}
+ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;max-width:70ch}
+.warnbox{background:var(--warn-soft);color:var(--fg);border-radius:10px;padding:12px 14px;font-size:.92rem}
+.warnbox b{color:var(--warn)}
+@media (max-width:560px){.months{grid-template-columns:repeat(6,minmax(0,1fr))}.log li{grid-template-columns:1fr;gap:0}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<!--
+  DADOS ATUALIZADOS DIARIAMENTE.
+  A tarefa diária edita SOMENTE este bloco JSON: atualiza "atualizado", os campos "hoje" e "status"
+  de cada alerta, troca "oportunidades" e acrescenta uma entrada no INÍCIO de "diario".
+  status: "comprar" | "bom" | "esperar" | "caro"
+-->
+<script id="dados" type="application/json">
+{
+  "atualizado": "26/11/2026",
+  "veredito": "Esperar, mas olhar a Black Friday. As tarifas para março de 2027 estão na faixa normal (R$ 6.700 a R$ 7.600 por pessoa). Compre quando aparecer até R$ 5.900.",
+  "alertas": [
+    {"item": "Aéreo GRU → Bangkok / Phuket → GRU, econômica, por pessoa", "hoje": "R$ 6.716 a 7.598", "bom": "até R$ 5.900", "comprar": "até R$ 5.200", "status": "esperar"},
+    {"item": "Aéreo em executiva, por pessoa", "hoje": "sem cotação para mar/27", "bom": "até R$ 18.000", "comprar": "até R$ 15.000", "status": "esperar"},
+    {"item": "Voo Bangkok → Krabi (AirAsia, Thai Lion), por pessoa", "hoje": "≈ R$ 250 a 350", "bom": "até R$ 300", "comprar": "até R$ 220", "status": "esperar"},
+    {"item": "Hotel 4★ em Railay ou Ao Nang, por noite", "hoje": "≈ R$ 500 a 800", "bom": "até R$ 600", "comprar": "até R$ 450", "status": "esperar"},
+    {"item": "Bônus na transferência Nubank → LATAM Pass", "hoje": "sem campanha confirmada", "bom": "25%", "comprar": "40% ou mais", "status": "esperar"},
+    {"item": "Dólar comercial (US$ 1)", "hoje": "a preencher na 1ª atualização", "bom": "abaixo de R$ 5,30", "comprar": "abaixo de R$ 5,10", "status": "esperar"}
+  ],
+  "oportunidades": [
+    {"titulo": "Qatar Airways: Black Friday com até 20% de desconto para quem é do Privilege Club", "detalhe": "Cadastro grátis no Privilege Club antes de pesquisar. Teste as datas 06/03 → 20/03/2027 com volta saindo de Phuket. Vale só se o total ficar abaixo de R$ 5.900 por pessoa."},
+    {"titulo": "Black Friday em 27/11/2026 (sexta)", "detalhe": "Emirates, Turkish e Ethiopian costumam soltar tarifas para a Ásia nesta semana. Compare no Google Flights com as datas flexíveis (±3 dias)."},
+    {"titulo": "Parcelamento sem juros", "detalhe": "Qatar e Emirates parcelam em até 10x no site brasileiro. Deixar o dinheiro rendendo numa Caixinha do Nubank enquanto paga as parcelas economiza perto de 4% a 5% do valor."}
+  ],
+  "diario": [
+    {"data": "26/11/2026", "texto": "Início do acompanhamento. Agregadores mostram GRU–BKK ida e volta entre R$ 6.716 (ViajaNet) e R$ 7.598 (Decolar) por pessoa; Momondo registrou R$ 7.096 nas últimas 72 h. Qatar com Black Friday para membros do Privilege Club. Nenhum bônus Nubank → LATAM Pass confirmado (as últimas campanhas foram de 25%, em setembro e outubro)."}
+  ]
+}
+</script>
+
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">Roteiro para o casal · plano de 2027</span>
+  <h1>Tailândia 2027</h1>
+  <p class="lead">Bangkok e o mar de Andamão em 16 dias, na época seca e depois do pico de preços. Krabi, Railay, Phi Phi e Phuket, com volta saindo de Phuket para não refazer caminho.</p>
+  <div class="facts">
+    <div class="fact"><span>Datas sugeridas</span><b>06 → 21 de março</b><span>Sai num sábado, volta num domingo</span></div>
+    <div class="fact"><span>Dias úteis usados</span><b class="num">10</b><span>Depois do Carnaval e antes da Páscoa</span></div>
+    <div class="fact"><span>Orçamento do casal</span><b>R$ 22 a 33 mil</b><span>Econômico a conforto, com aéreo</span></div>
+    <div class="fact"><span>Plano B de datas</span><b>Novembro de 2027</b><span>Comprar entre abril e julho de 2027</span></div>
+  </div>
+</header>
+
+<section aria-labelledby="painel">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 id="painel">Preços e alertas</h2>
+      <span class="note">Atualizado em <b id="atualizado"></b> · revisado todo dia</span>
+    </div>
+    <p id="veredito"></p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>O que acompanho</th><th class="r">Hoje</th><th class="r">Bom preço</th><th class="r">Compre já</th><th>Status</th></tr></thead>
+        <tbody id="alertas"></tbody>
+      </table>
+    </div>
+    <h3>Oportunidades agora</h3>
+    <ul class="opps" id="opps"></ul>
+    <h3>Diário de preços</h3>
+    <ul class="log" id="diario"></ul>
+    <p class="note">Os valores de hoje vêm de buscadores (Decolar, ViajaNet, Momondo, Google Flights) e mudam a cada consulta. Confirme no site da companhia antes de pagar.</p>
+  </div>
+</section>
+
+<section aria-labelledby="quando">
+  <h2 id="quando">Por que março</h2>
+  <p>No mar de Andamão (Krabi, Phi Phi, Phuket) a estação seca vai de novembro a abril. Dezembro e janeiro são o pico de preço. Em março o mar está calmo e transparente, as Ilhas Similan estão abertas e as passagens saem do Brasil sem a demanda de férias.</p>
+  <div class="months" role="img" aria-label="Clima e preço no mar de Andamão por mês">
+    <div class="m m-peak">jan<small>pico</small></div>
+    <div class="m m-best">fev<small>seco</small></div>
+    <div class="m m-best m-pick">mar<small>escolha</small></div>
+    <div class="m m-ok">abr<small>quente</small></div>
+    <div class="m m-rain">mai<small>chuva</small></div>
+    <div class="m m-rain">jun<small>chuva</small></div>
+    <div class="m m-rain">jul<small>chuva</small></div>
+    <div class="m m-rain">ago<small>chuva</small></div>
+    <div class="m m-rain">set<small>chuva</small></div>
+    <div class="m m-rain">out<small>chuva</small></div>
+    <div class="m m-ok">nov<small>plano B</small></div>
+    <div class="m m-peak">dez<small>pico</small></div>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--good)"></i>Seco e preço médio</span>
+    <span><i style="background:var(--lagoon)"></i>Bom, com algum risco ou calor</span>
+    <span><i style="background:var(--gold)"></i>Seco, mas caro</span>
+    <span><i style="background:var(--bad)"></i>Monções no lado de Andamão</span>
+  </div>
+  <p class="note">Em março o norte (Chiang Mai) está na época das queimadas, com fumaça e ar ruim. Por isso ele fica fora deste roteiro. No plano B de novembro, troque Phuket por 3 noites em Chiang Mai.</p>
+</section>
+
+<section aria-labelledby="roteiro">
+  <h2 id="roteiro">Roteiro dia a dia</h2>
+  <p class="note">Compre a passagem como "múltiplos destinos": ida São Paulo → Bangkok e volta Phuket → São Paulo. Com Qatar, Emirates ou Turkish o preço costuma ser o mesmo da ida e volta simples.</p>
+
+  <div class="stop">Ida</div>
+  <div class="days">
+    <div class="day"><span class="when">Sáb 06/03 e dom 07/03</span><p>Saída de Guarulhos à noite, conexão em Doha, Dubai ou Istambul. São cerca de 28 a 32 horas de viagem, e a Tailândia está 10 horas à frente.</p><p class="tip">Escolha uma conexão de 2 a 4 horas. Escalas acima de 8 horas podem dar direito a hotel da companhia.</p></div>
+  </div>
+
+  <div class="stop">Bangkok · 3 noites</div>
+  <div class="days">
+    <div class="day"><span class="when">Seg 08/03</span><p>Chegada e hotel à beira do rio Chao Phraya. Fim de tarde no Asiatique ou num barco pelo rio.</p></div>
+    <div class="day"><span class="when">Ter 09/03</span><p>Grande Palácio cedo (abre às 8h30), Wat Pho e massagem tailandesa na escola do templo. Barco de 4 baht até Wat Arun para o pôr do sol. Drinque num rooftop.</p><p class="tip">Ombros e joelhos cobertos nos templos.</p></div>
+    <div class="day"><span class="when">Qua 10/03</span><p>Mercado do trem de Maeklong e mercado flutuante de Amphawa (meio dia) ou as ruínas de Ayutthaya. À noite, comida de rua em Chinatown (Yaowarat).</p></div>
+  </div>
+
+  <div class="stop">Krabi: Ao Nang e Railay · 4 noites</div>
+  <div class="days">
+    <div class="day"><span class="when">Qui 11/03</span><p>Voo cedo de Bangkok (DMK) para Krabi, cerca de 1h20. Hotel em Railay, só acessível de barco, ou em Ao Nang, mais barato. Pôr do sol em Railay West.</p></div>
+    <div class="day"><span class="when">Sex 12/03</span><p>Praia de Phra Nang, a caverna e a trilha do mirante de Railay. Caiaque entre os paredões de calcário.</p></div>
+    <div class="day"><span class="when">Sáb 13/03</span><p>Passeio das 4 ilhas (Poda, Chicken, Tup e Phra Nang) ou Ilhas Hong de lancha, com snorkel.</p><p class="tip">Saia no primeiro horário para chegar antes dos grupos.</p></div>
+    <div class="day"><span class="when">Dom 14/03</span><p>Emerald Pool e as fontes termais, ou um dia livre na praia. Mercado noturno de Krabi Town.</p></div>
+  </div>
+
+  <div class="stop">Koh Phi Phi · 2 noites</div>
+  <div class="days">
+    <div class="day"><span class="when">Seg 15/03</span><p>Ferry de Ao Nang para Phi Phi, cerca de 2 horas. Subida ao mirante no fim da tarde.</p></div>
+    <div class="day"><span class="when">Ter 16/03</span><p>Barco cedo para Maya Bay, a lagoa de Pileh e a ilha Bamboo. Snorkel com peixes e corais.</p><p class="tip">Maya Bay fecha todo ano em agosto e setembro. Em março está aberta.</p></div>
+  </div>
+
+  <div class="stop">Phuket · 3 noites</div>
+  <div class="days">
+    <div class="day"><span class="when">Qua 17/03</span><p>Ferry para Phuket, cerca de 2 horas. Hotel em Kata ou Karon, mais calmas que Patong. Big Buddha no fim do dia.</p></div>
+    <div class="day"><span class="when">Qui 18/03</span><p>Ilhas Similan de lancha, o melhor snorkel do país, abertas de outubro a maio. Ou a baía de Phang Nga, com a ilha James Bond e a vila flutuante de Koh Panyee.</p></div>
+    <div class="day"><span class="when">Sex 19/03</span><p>Old Phuket Town de manhã, spa à tarde e pôr do sol no Cabo Promthep.</p></div>
+  </div>
+
+  <div class="stop">Volta</div>
+  <div class="days">
+    <div class="day"><span class="when">Sáb 20/03 e dom 21/03</span><p>Voo de Phuket com conexão no Golfo ou em Istambul. Chegada em São Paulo no domingo.</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="orcamento">
+  <h2 id="orcamento">Orçamento do casal</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Item</th><th class="r">Econômico</th><th class="r">Conforto</th><th>Como economizar</th></tr></thead>
+      <tbody>
+        <tr><td>Aéreo internacional (2 pessoas)</td><td class="r num">11.000</td><td class="r num">13.400</td><td>Econômico já considera o alerta de R$ 5.500 por pessoa</td></tr>
+        <tr><td>Voo Bangkok → Krabi</td><td class="r num">600</td><td class="r num">700</td><td>Com bagagem despachada incluída</td></tr>
+        <tr><td>Ferries e traslados</td><td class="r num">900</td><td class="r num">1.300</td><td>Compre os ferries no 12Go ou no próprio cais</td></tr>
+        <tr><td>Hospedagem, 12 noites</td><td class="r num">4.200</td><td class="r num">8.400</td><td>R$ 350 ou R$ 700 por noite; Agoda costuma ser o mais barato lá</td></tr>
+        <tr><td>Alimentação</td><td class="r num">2.400</td><td class="r num">4.200</td><td>Comida de rua boa por R$ 15 a R$ 30 o prato</td></tr>
+        <tr><td>Passeios</td><td class="r num">2.500</td><td class="r num">4.500</td><td>Similan e Phi Phi são os mais caros</td></tr>
+        <tr><td>eSIM, seguro e transporte local</td><td class="r num">700</td><td class="r num">1.200</td><td>Grab no lugar de táxi; seguro pode vir do cartão</td></tr>
+        <tr><th>Total em reais</th><th class="r num">22.300</th><th class="r num">33.700</th><th></th></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Estimativas de novembro de 2026, com câmbio perto de R$ 5,40 e 1 baht perto de R$ 0,16. Se a passagem for comprada pelo preço de hoje, some de R$ 2.400 a R$ 4.200 ao total.</p>
+</section>
+
+<section aria-labelledby="cartoes">
+  <h2 id="cartoes">Seus cartões e bancos</h2>
+  <p>Você me contou que tem <b>Nubank</b>, assina o <b>Meli+</b> e tem TotalPass e Gympass pela empresa. Não sei se o seu Nubank é o Ultravioleta nem quantos pontos você tem. Me diga para eu ajustar o plano.</p>
+  <div class="cards">
+    <div class="card"><h3>Pague as passagens no Nubank</h3><p>Se for o Ultravioleta (Mastercard Black), a compra acumula pontos e costuma liberar o seguro viagem do cartão, que só vale quando a passagem é paga com ele. Emita o bilhete do seguro no app antes de viajar e confira a cobertura médica.</p></div>
+    <div class="card"><h3>Parcele e deixe o dinheiro rendendo</h3><p>Pague em 10x sem juros e guarde o valor total numa Caixinha do Nubank. Com o CDI perto de 1% ao mês, o rendimento cobre parte do voo doméstico.</p></div>
+    <div class="card"><h3>Pontos Nubank só com bônus</h3><p>Ative o Modo LATAM Pass (1 ponto = 1 milha) só se for usar as milhas. Transfira apenas em campanhas de 25% ou mais. Com saldo pequeno, use as milhas no voo para São Paulo ou num upgrade, não na passagem para a Ásia.</p></div>
+    <div class="card"><h3>Gastos lá: cuidado com o IOF</h3><p>Compra no cartão de crédito em moeda estrangeira paga 3,5% de IOF. Uma conta global em dólar paga 1,1%. Em R$ 8 mil de gastos lá, a diferença é de cerca de R$ 190. Os caixas eletrônicos tailandeses cobram 220 baht (cerca de R$ 35) por saque, então saque pouco e valores maiores.</p></div>
+    <div class="card"><h3>Meli+ e Mercado Pago</h3><p>Ajuda pouco na viagem em si. Use para os itens de preparo com frete grátis: adaptador de tomada universal, bolsa estanque, protetor solar e capa de chuva.</p></div>
+    <div class="card"><h3>Programas de fidelidade grátis</h3><p>Cadastre os dois no Qatar Privilege Club e no Emirates Skywards antes de comprar. A Qatar dá desconto a membros na Black Friday e os voos de 30 horas rendem Avios.</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="alternativas">
+  <h2 id="alternativas">Outras opções paradisíacas na Ásia</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Destino</th><th>Melhor época</th><th>Custo no destino</th><th>Entrada para brasileiros</th><th>Veredito</th></tr></thead>
+      <tbody>
+        <tr><td><b>Tailândia</b> (Krabi, Phuket)</td><td>nov a abr</td><td>Baixo</td><td>Sem visto, cadastro TDAC</td><td><span class="pill p-comprar">Melhor custo-benefício</span></td></tr>
+        <tr><td><b>Filipinas</b> (Palawan, El Nido)</td><td>dez a mai</td><td>Baixo</td><td>Sem visto (confirme)</td><td><span class="pill p-bom">Mais selvagem, voos piores</span></td></tr>
+        <tr><td><b>Vietnã</b> (Phu Quoc, Ha Long)</td><td>dez a abr</td><td>Baixo</td><td>Visto eletrônico</td><td><span class="pill p-bom">Boa cultura, praia média</span></td></tr>
+        <tr><td><b>Bali</b> (Indonésia)</td><td>abr a out</td><td>Médio</td><td>Visto na chegada e taxa turística</td><td><span class="pill p-bom">Para viajar entre maio e setembro</span></td></tr>
+        <tr><td><b>Maldivas</b></td><td>dez a abr</td><td>Muito alto</td><td>Sem visto</td><td><span class="pill p-caro">Só como extensão de 3 noites</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Para uma lua de mel, as Maldivas cabem como 3 noites na volta, com conexão em Dubai ou Doha. Hospedagem lá custa de R$ 2 mil a R$ 6 mil por noite.</p>
+</section>
+
+<section aria-labelledby="checklist">
+  <h2 id="checklist">Antes de viajar</h2>
+  <div class="warnbox"><b>Febre amarela:</b> a Tailândia exige o Certificado Internacional de Vacinação (CIVP) de quem chega do Brasil. Tome a vacina pelo menos 10 dias antes e emita o certificado no app gov.br ou na Anvisa.</div>
+  <ul class="plain">
+    <li>Passaporte válido por pelo menos 6 meses depois da volta, ou seja, até setembro de 2027.</li>
+    <li>TDAC (cartão de chegada digital), gratuito, nos 3 dias antes de chegar. Use só o site oficial tdac.immigration.go.th; há sites que cobram pelo mesmo formulário.</li>
+    <li>Brasileiros entram sem visto para turismo. As fontes divergem sobre o prazo (60 ou 90 dias); para 16 dias não faz diferença.</li>
+    <li>Seguro com cobertura médica alta. Passeio de lancha e mergulho às vezes precisam de cobertura específica.</li>
+    <li>eSIM tailandês (AIS, TrueMove ou DTAC) por cerca de R$ 60 a R$ 90 para 15 dias.</li>
+    <li>Tomadas tipo A, B, C e O em 220 V. O adaptador universal resolve.</li>
+  </ul>
+</section>
+
+<section aria-labelledby="fontes">
+  <h2 id="fontes">Fontes</h2>
+  <ul class="plain note">
+    <li><a href="https://www.decolar.com/passagens-aereas/sao/bkk/passagens-aereas-para-bangkok-saindo-de-sao+paulo">Decolar: São Paulo → Bangkok</a> · <a href="https://www.viajanet.com.br/passagens-aereas/bkk/passagens-para-bangkok">ViajaNet</a> · <a href="https://www.momondo.com.br/passagem/sao-paulo/bangkok">Momondo</a></li>
+    <li><a href="https://www.melhoresdestinos.com.br/black-friday-2026-viagens-passagens-pacotes">Melhores Destinos: Black Friday 2026</a> · <a href="https://www.techtudo.com.br/listas/2026/11/passagem-aerea-na-black-friday-veja-cupons-e-ofertas-em-milhas-bf2026-edsoftwares.ghtml">TechTudo: passagens na Black Friday</a></li>
+    <li><a href="https://latampass.latam.com/pt_br/junte-milhas/nubank">LATAM Pass: parceria Nubank</a> · <a href="https://altarendablog.com.br/2026/07/27/nubank-atualiza-modo-latam-pass-em-julho-de-2026-vale-a-pena-saiba-como-acumular-milhas-com-o-ultravioleta/">Modo LATAM Pass (jul/2026)</a> · <a href="https://capitalfinanceiro.com.br/latam-pass-25-bonus-transferencia-pontos-nubank-ultravioleta/">Bônus de 25% (out/2026)</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Thailand_Digital_Arrival_Card">TDAC</a> · <a href="https://guia.melhoresdestinos.com.br/documentos-tailandia.html">Documentos para a Tailândia</a></li>
+  </ul>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var d; try{ d = JSON.parse(document.getElementById('dados').textContent); }catch(e){ return; }
+  var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+  var label = {comprar:'Compre já', bom:'Bom preço', esperar:'Esperar', caro:'Caro'};
+  document.getElementById('atualizado').textContent = d.atualizado;
+  document.getElementById('veredito').textContent = d.veredito;
+  document.getElementById('alertas').innerHTML = d.alertas.map(function(a){
+    return '<tr><td>'+esc(a.item)+'</td><td class="r num">'+esc(a.hoje)+'</td><td class="r num">'+esc(a.bom)+'</td><td class="r num">'+esc(a.comprar)+'</td><td><span class="pill p-'+esc(a.status)+'">'+esc(label[a.status]||a.status)+'</span></td></tr>';
+  }).join('');
+  document.getElementById('opps').innerHTML = d.oportunidades.map(function(o){
+    return '<li><b>'+esc(o.titulo)+'</b><small>'+esc(o.detalhe)+'</small></li>';
+  }).join('');
+  document.getElementById('diario').innerHTML = d.diario.map(function(l){
+    return '<li><time class="num">'+esc(l.data)+'</time><span>'+esc(l.texto)+'</span></li>';
+  }).join('');
+})();
+</script>
